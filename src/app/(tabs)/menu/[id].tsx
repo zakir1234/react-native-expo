@@ -6,15 +6,19 @@ import products from "@assets/data/products";
 import { defaultPizzaImage } from "@/components/ProductListItem";
 import { useState } from "react";
 import Button from "@/components/Button";
+import { useCart } from "@/providers/cartProvider";
+import { PizzaSize } from "@/types";
 
 const ProductDetailsScreen = () => {
   const { id } = useLocalSearchParams();
-  const [selectedSize, setSelectedSize] = useState("M");
+  const { addItem } = useCart();
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
 
   const product = products.find((p) => p.id.toString() === id);
-  const sizes = ["S", "M", "L", "XL"];
+  const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
   const addToCart = () => {
-    console.log("adding to card");
+    if (!product) return;
+    addItem(product, selectedSize);
   };
 
   if (!product) {
@@ -23,8 +27,7 @@ const ProductDetailsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: `${product.name} Details` }} />
-      <Text>{product.name}</Text>
+      <Stack.Screen options={{ title: `${product.name}` }} />
       <Image
         source={{ uri: product.image || defaultPizzaImage }}
         style={styles.image}
