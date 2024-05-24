@@ -1,16 +1,16 @@
 import { View, Text, StyleSheet, TextInput, Image } from "react-native";
 import React, { useState } from "react";
 import Button from "@/components/Button";
-import { serialize } from "v8";
 import { defaultPizzaImage } from "@/components/ProductListItem";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
+import { Stack } from "expo-router";
 
 const CreateProductScreen = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [errors, setErrors] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState<String | null>(null);
   const resetFields = () => {
     setName("");
     setPrice("");
@@ -48,7 +48,7 @@ const CreateProductScreen = () => {
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
@@ -61,6 +61,8 @@ const CreateProductScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Stack.Screen options={{ headerTitle: "Create Product" }} />
+
       <Image
         source={{ uri: image || defaultPizzaImage }}
         style={styles.image}
