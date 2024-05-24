@@ -11,7 +11,7 @@ export default function MenuStack() {
         options={{
           title: "Menu",
           headerRight: () => (
-            <Link href="/" asChild>
+            <Link href="/menu/" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
@@ -31,7 +31,7 @@ export default function MenuStack() {
         options={{
           title: "Menu",
           headerRight: () => (
-            <Link href="/" asChild>
+            <Link href="/menu/" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
