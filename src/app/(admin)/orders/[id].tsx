@@ -17,6 +17,7 @@ import { useCart } from "@/providers/cartProvider";
 import { PizzaSize } from "@/types";
 import OrderListItem from "@/components/OrderListItem";
 import OrderItemListItem from "@/components/OrderItemListItem";
+import OrderListFooter from "@/components/OrderListFooter";
 
 const OrderDetailsScreen = () => {
   const { id } = useLocalSearchParams();
@@ -46,7 +47,7 @@ const OrderDetailsScreen = () => {
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
         // ListHeaderComponent={() => <OrderListItem order={order} />}
-        // ListFooterComponent={() => <OrderListItem order={order} />}
+        ListFooterComponent={() => <OrderListFooter item={order} />}
       />
     </View>
   );
