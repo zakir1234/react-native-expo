@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import base from "../constants/server";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
+import URL from "@/constants/URL";
 
 interface AuthProps {
   authState?: { token: string | null; authenticated: boolean | null };
@@ -10,8 +11,12 @@ interface AuthProps {
   onLogout?: () => Promise<any>;
 }
 
-const TOKEN_KEY = "access_token";
+const TOKEN_KEY = "key";
 const AuthContext = createContext<AuthProps>({});
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 
 export const AuthProvider = ({ children }: any) => {
   const [authState, setAuthState] = useState<{
@@ -37,7 +42,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const register = async (mobileNo: string, password: string) => {
     try {
-      return await axios.post(base.fullUrl + "/app/public/sign-in", {
+      return await axios.post(base.fullUrl + URL.LOGIN, {
         mobileNo,
         password,
       });
@@ -47,25 +52,32 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const login = async (mobileNo: string, password: string) => {
+    console.log(mobileNo, password);
+
     try {
-      const result = await axios.post(base.fullUrl + "/app/public/sign-in", {
+      const result = await axios.post(base.fullUrl + URL.LOGIN, {
         mobileNo,
         password,
       });
 
-      setAuthState({ token: result.data.access_token, authenticated: true });
+      console.log(result.data);
+
+      setAuthState({
+        token: result.data.key,
+        authenticated: result.data.authenticated,
+      });
 
       axios.defaults.headers.common[
         "Authorization"
-      ] = `Bearer ${result.data.access_token}`;
+      ] = `Bearer ${result.data.key}`;
 
-      await SecureStore.setItemAsync(TOKEN_KEY, result.data.access_token);
+      await SecureStore.setItemAsync(TOKEN_KEY, result.data.key);
       return result;
     } catch (e) {
       setAuthState({ token: null, authenticated: false });
       axios.defaults.headers.common["Authorization"] = "";
-
-      return { error: true, msg: (e as any).response.data.msg };
+      console.log("catch executed", (e as any).response.data);
+      return { error: true, msg: (e as any).response.data };
     }
   };
 
@@ -85,10 +97,7 @@ export const AuthProvider = ({ children }: any) => {
     onLogout: logout,
     authState,
   };
-  return <AuthContext.Provider value={value}></AuthContext.Provider>;
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
