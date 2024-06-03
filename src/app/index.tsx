@@ -17,9 +17,11 @@ const index = () => {
     return <Redirect href={"/sign-in"} />;
   }
 
-  // if (!isAdmin) {
-  //   return <Redirect href={"/(user)"} />;
-  // }
+  if (authState.roles != null) {
+    if (authState.roles[0] == "ROLE_USER") {
+      return <Redirect href={"/(user)"} />;
+    }
+  }
 
   return (
     <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
