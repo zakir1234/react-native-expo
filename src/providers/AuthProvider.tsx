@@ -4,6 +4,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import URL from "@/constants/URL";
 import { Redirect, router } from "expo-router";
+import KEY from "../constants/KEY";
 
 interface AuthProps {
   authState?: {
@@ -16,8 +17,6 @@ interface AuthProps {
   onLogout?: () => Promise<any>;
 }
 
-const TOKEN_KEY = "key";
-const ROLE_KEY = "roles";
 const AuthContext = createContext<AuthProps>({});
 
 export const useAuth = () => {
@@ -37,14 +36,14 @@ export const AuthProvider = ({ children }: any) => {
 
   useEffect(() => {
     const loadToken = async () => {
-      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+      const token = await SecureStore.getItemAsync(KEY.TOKEN);
       //  console.log("stored", token);
       if (token) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         setAuthState({
           token: token,
           authenticated: true,
-          roles: new Array(JSON.stringify(SecureStore.getItemAsync(ROLE_KEY))),
+          roles: new Array(JSON.stringify(SecureStore.getItemAsync(KEY.ROLE))),
         });
       }
     };
@@ -80,8 +79,8 @@ export const AuthProvider = ({ children }: any) => {
         "Authorization"
       ] = `Bearer ${result.data.key}`;
 
-      await SecureStore.setItemAsync(TOKEN_KEY, result.data.key);
-      await SecureStore.setItemAsync(ROLE_KEY, result.data.roles[0]);
+      await SecureStore.setItemAsync(KEY.TOKEN, result.data.key);
+      await SecureStore.setItemAsync(KEY.ROLE, result.data.roles[0]);
       return result;
     } catch (e) {
       setAuthState({ token: null, authenticated: false, roles: [] });
@@ -92,8 +91,8 @@ export const AuthProvider = ({ children }: any) => {
   };
 
   const logout = async () => {
-    SecureStore.deleteItemAsync(TOKEN_KEY);
-    SecureStore.deleteItemAsync(ROLE_KEY);
+    SecureStore.deleteItemAsync(KEY.TOKEN);
+    SecureStore.deleteItemAsync(KEY.ROLE);
     axios.defaults.headers.common["Authorization"] = "";
 
     setAuthState({
