@@ -3,7 +3,7 @@ import base from "../constants/server";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import URL from "@/constants/URL";
-import { router } from "expo-router";
+import { Redirect, router } from "expo-router";
 
 interface AuthProps {
   authState?: {
@@ -93,6 +93,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const logout = async () => {
     SecureStore.deleteItemAsync(TOKEN_KEY);
+    SecureStore.deleteItemAsync(ROLE_KEY);
     axios.defaults.headers.common["Authorization"] = "";
 
     setAuthState({
@@ -101,7 +102,7 @@ export const AuthProvider = ({ children }: any) => {
       roles: [],
     });
 
-    router.replace("/");
+    //return <Redirect href={"/"} />;
   };
 
   const value = {

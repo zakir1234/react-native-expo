@@ -4,7 +4,7 @@ import Button from "@/components/Button";
 import { defaultPizzaImage } from "@/components/ProductListItem";
 import Colors from "@/constants/Colors";
 import * as ImagePicker from "expo-image-picker";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
+import { Link, Redirect, Stack, useLocalSearchParams } from "expo-router";
 import { isEmpty } from "@/constants/utility";
 
 import axios from "axios";
@@ -21,6 +21,7 @@ const CreateProfileScreen = () => {
   async function handleSignOut() {
     try {
       const result = await onLogout!();
+      return <Redirect href={"/"} />;
     } catch (e) {
       console.log(e);
     }
