@@ -10,17 +10,17 @@ import base from "../../constants/server";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { useAuth } from "@/providers/AuthProvider";
+import { isLoaded } from "expo-font";
 
 const CreateProductScreen = () => {
   const [mobileNo, setMobileNo] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const { onLogin } = useAuth();
 
   async function handleSignIn() {
-    // SecureStore.deleteItemAsync("token");
-    //setLoading(true);
+    // setLoading(true);
 
     //var data = { mobileNo, password };
 
@@ -29,9 +29,12 @@ const CreateProductScreen = () => {
     }
 
     try {
+      //setLoading(true);
       const result = await onLogin!(mobileNo, password);
+      // setLoading(false);
     } catch (e) {
       console.log(e);
+      //  setLoading(false);
     }
 
     //onLogin!(mobileNo, password);

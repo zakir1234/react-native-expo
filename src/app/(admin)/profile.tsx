@@ -18,10 +18,6 @@ import * as SecureStore from "expo-secure-store";
 import { useAuth } from "@/providers/AuthProvider";
 
 const CreateProfileScreen = () => {
-  const [mobileNo, setMobileNo] = useState("");
-  const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState("");
-  const [loading, setLoading] = useState(false);
   const { onLogout } = useAuth();
 
   async function handleSignOut() {

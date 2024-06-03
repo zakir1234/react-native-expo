@@ -6,7 +6,7 @@ import { useAuth } from "@/providers/AuthProvider";
 // import { supabase } from "@lib/supabase";
 
 const index = () => {
-  const { authState, onLogout } = useAuth();
+  const { authState, onLogout, loading } = useAuth();
 
   async function handleSignOut() {
     try {
@@ -17,11 +17,9 @@ const index = () => {
     }
   }
 
-  // const { session, loading, isAdmin } = useAuth();
-
-  // if (loading) {
-  //   return <ActivityIndicator />;
-  // }
+  if (loading) {
+    return <ActivityIndicator />;
+  }
 
   if (!authState?.authenticated) {
     return <Redirect href={"/sign-in"} />;

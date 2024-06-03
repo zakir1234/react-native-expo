@@ -15,6 +15,7 @@ interface AuthProps {
   onRegister?: (mobileNo: string, password: string) => Promise<any>;
   onLogin?: (mobileNo: string, password: string) => Promise<any>;
   onLogout?: () => Promise<any>;
+  loading?: boolean | null;
 }
 
 const AuthContext = createContext<AuthProps>({});
@@ -33,6 +34,8 @@ export const AuthProvider = ({ children }: any) => {
     authenticated: null,
     roles: [],
   });
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadToken = async () => {
@@ -64,6 +67,7 @@ export const AuthProvider = ({ children }: any) => {
 
   const login = async (mobileNo: string, password: string) => {
     try {
+      setLoading(true);
       const result = await axios.post(base.fullUrl + URL.LOGIN, {
         mobileNo,
         password,
@@ -74,6 +78,7 @@ export const AuthProvider = ({ children }: any) => {
         authenticated: result.data.authenticated,
         roles: result.data.roles,
       });
+      setLoading(false);
 
       axios.defaults.headers.common[
         "Authorization"
@@ -109,6 +114,7 @@ export const AuthProvider = ({ children }: any) => {
     onLogin: login,
     onLogout: logout,
     authState,
+    loading,
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
