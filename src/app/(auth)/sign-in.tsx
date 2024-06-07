@@ -1,65 +1,55 @@
-import { View, Text, StyleSheet, TextInput, Image, Alert } from "react-native";
-import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  ActivityIndicator,
+} from "react-native";
+import React, { useState } from "react";
 import Button from "@/components/Button";
-import { defaultPizzaImage } from "@/components/ProductListItem";
 import Colors from "@/constants/Colors";
-import * as ImagePicker from "expo-image-picker";
-import { Link, Stack, useLocalSearchParams } from "expo-router";
-import { isEmpty } from "@/constants/utility";
-import base from "../../constants/server";
-import axios from "axios";
-import * as SecureStore from "expo-secure-store";
+import { Link, Stack } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
-import { isLoaded } from "expo-font";
+import { useNetInfo } from "@react-native-community/netinfo";
 
 const CreateProductScreen = () => {
   const [mobileNo, setMobileNo] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState("");
-  // const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { onLogin } = useAuth();
+  const netInfo = useNetInfo();
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
 
   async function handleSignIn() {
-    // setLoading(true);
-
-    //var data = { mobileNo, password };
-
-    if (!mobileNo || !password) {
+    if (!validateInput()) {
       return;
     }
 
-    try {
-      //setLoading(true);
-      const result = await onLogin!(mobileNo, password);
-      // setLoading(false);
-    } catch (e) {
-      console.log(e);
-      //  setLoading(false);
+    if (!netInfo.isConnected) {
+      setErrors("Please check your internet connection");
+      return false;
     }
 
-    //onLogin!(mobileNo, password);
+    setLoading(true);
 
-    // axios
-    //   .post(base.fullUrl + "/app/public/access_token", data)
-    //   .then((response) => {
-    //     SecureStore.setItem("token", response.data.access_token);
-    //     console.log(SecureStore.getItem("token"));
-    //     console.log("from api", response.data.access_token);
-    //     setLoading(false);
-    //   })
-    //   .catch((error) => {
-    //     SecureStore.deleteItemAsync("token");
-    //     setErrors(error?.response?.data);
-    //     setLoading(false);
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
+    try {
+      setLoading(true);
+      const result = await onLogin!(mobileNo, password);
+      if (result.error) {
+        setErrors(result.msg);
+      }
 
-    // const token = SecureStore.getItem("token");
+      console.log("from sign in : ", result);
+      setLoading(false);
+    } catch (e) {
+      console.log(e);
+      setLoading(false);
+    }
   }
-
-  const register = () => {};
 
   const resetFields = () => {
     setMobileNo("");
@@ -69,7 +59,7 @@ const CreateProductScreen = () => {
   const validateInput = () => {
     setErrors("");
     if (!mobileNo) {
-      setErrors("Email is required");
+      setErrors("Mobile No is required");
       return false;
     }
 
@@ -79,24 +69,6 @@ const CreateProductScreen = () => {
     }
 
     return true;
-  };
-
-  const onUpdate = () => {
-    if (!validateInput()) {
-      return;
-    }
-
-    console.log("Updating Product");
-    resetFields();
-  };
-
-  const onCreate = () => {
-    if (!validateInput()) {
-      return;
-    }
-
-    console.log("Creating Product");
-    resetFields();
   };
 
   return (

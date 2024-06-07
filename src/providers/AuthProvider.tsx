@@ -74,24 +74,24 @@ export const AuthProvider = ({ children }: any) => {
       });
 
       setAuthState({
-        token: result.data.key,
-        authenticated: result.data.authenticated,
-        roles: result.data.roles,
+        token: result?.data?.key,
+        authenticated: result?.data?.authenticated,
+        roles: result?.data?.roles,
       });
       setLoading(false);
 
       axios.defaults.headers.common[
         "Authorization"
-      ] = `Bearer ${result.data.key}`;
+      ] = `Bearer ${result?.data?.key}`;
 
-      await SecureStore.setItemAsync(KEY.TOKEN, result.data.key);
-      await SecureStore.setItemAsync(KEY.ROLE, result.data.roles[0]);
+      await SecureStore.setItemAsync(KEY.TOKEN, result?.data?.key);
+      await SecureStore.setItemAsync(KEY.ROLE, result?.data?.roles[0]);
       return result;
     } catch (e) {
       setAuthState({ token: null, authenticated: false, roles: [] });
       axios.defaults.headers.common["Authorization"] = "";
-      console.log("catch executed", (e as any).response.data);
-      return { error: true, msg: (e as any).response.data };
+      console.log("catch executed", (e as any).response?.data);
+      return { error: true, msg: (e as any).response?.data };
     }
   };
 
